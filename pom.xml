@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.mock</groupId>
+	<artifactId>base</artifactId>
+	<version>${project_version}</version>
+	<packaging>jar</packaging>
+
+	<name>base</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>me</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<deploy>me</deploy>
+				<project_version>0.0.1-me-SNAPSHOT</project_version>
+			</properties>
+		</profile>
+		<profile>
+			<properties>
+				<deploy>dev</deploy>
+				<project_version>0.0.1-dev-SNAPSHOT</project_version>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<deploy>prod</deploy>
+				<project_version>0.0.1-prod-RELEASE</project_version>
+			</properties>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.3</version>
+		</dependency>
+			<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.12</version>
+		</dependency>
+		<dependency>  
+		    <groupId>org.slf4j</groupId>  
+		    <artifactId>slf4j-log4j12</artifactId>  
+		    <version>1.7.2</version>  
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>utf8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-prod-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<!-- this is important -->
+							<overwrite>true</overwrite>
+							<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+							<outputDirectory>${basedir}/target/classes</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>*.properties</include>
+										<include>*.xml</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>deploy/${deploy}</directory>
+									<targetPath>${basedir}/target/classes</targetPath>
+								</resource>
+							</resources>
+							<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+							<testOutputDirectory>target/test-classes</testOutputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
